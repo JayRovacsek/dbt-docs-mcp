@@ -1,5 +1,7 @@
 [![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/ad4aaf73-63ce-42e0-b27c-8541ae1fbab8)
 
+[![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/mattijsdp/dbt-docs-mcp)](https://archestra.ai/mcp-catalog/mattijsdp__dbt-docs-mcp)
+
 # dbt-docs-mcp
 
 Model Context Protocol (MCP) server for interacting with dbt project metadata, including dbt Docs artifacts (`manifest.json`, `catalog.json`). This server exposes dbt graph information and allows querying node details, model/column lineage, and related metadata.
