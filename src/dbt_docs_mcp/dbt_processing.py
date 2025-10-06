@@ -6,7 +6,7 @@ from dbt.artifacts.schemas.catalog import CatalogArtifact
 from dbt.artifacts.schemas.manifest import WritableManifest
 from sqlglot import expressions as exp
 from sqlglot import parse_one
-from sqlglot.errors import OptimizeError, SqlglotError
+from sqlglot.errors import OptimizeError, SqlglotError, ParseError
 from sqlglot.lineage import Node, lineage
 from sqlglot.optimizer.qualify import qualify
 from tqdm import tqdm
@@ -32,6 +32,8 @@ def create_database_schema_table_mapping_from_sql(manifest: WritableManifest, sc
             is not None
         ):
             continue
+        if model.resource_type not in ["model", "test"]:
+            continue
         expression = parse_one(model.compiled_code, dialect=DIALECT)
         try:
             qualified_expression = qualify(
@@ -54,6 +56,12 @@ def create_database_schema_table_mapping_from_sql(manifest: WritableManifest, sc
                 allow_partial_qualification=True,
                 dialect=DIALECT,
             )
+        except ParseError as e:
+            warnings.warn(
+                f"Error parsing {model.unique_id}. Passing it in processing.",
+                UserWarning,
+            )
+            continue
         schema[model.database.lower()][model.schema.lower()][model.name.lower()] = {
             name.lower(): None for name in qualified_expression.named_selects
         }
