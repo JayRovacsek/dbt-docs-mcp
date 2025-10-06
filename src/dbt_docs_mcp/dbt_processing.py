@@ -142,7 +142,12 @@ def get_column_lineage(column_name: str, sql: str, schema: dict, dialect: str = 
 def get_column_lineage_for_model(model, schema: dict, dialect: str = DIALECT) -> dict[str, list[dict]]:
     sql = model.compiled_code
     table_column_lineage = {}
-    for column_name in schema[model.database.lower()][model.schema.lower()][model.name.lower()]:
+    for column_name in (
+        schema
+        .get(model.database.lower(), {})
+        .get(model.schema.lower(), {})
+        .get(model.name.lower(), [])
+    ):
         try:
             table_column_lineage[column_name] = get_column_lineage(column_name, sql, schema, dialect)
         except SqlglotError as e:
