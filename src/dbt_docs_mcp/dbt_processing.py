@@ -32,7 +32,7 @@ def create_database_schema_table_mapping_from_sql(manifest: WritableManifest, sc
             is not None
         ):
             continue
-        if model.resource_type not in ["model", "test"]:
+        if model.resource_type not in ["model"]:
             continue
         expression = parse_one(model.compiled_code, dialect=DIALECT)
         try:
@@ -56,12 +56,6 @@ def create_database_schema_table_mapping_from_sql(manifest: WritableManifest, sc
                 allow_partial_qualification=True,
                 dialect=DIALECT,
             )
-        except ParseError as e:
-            warnings.warn(
-                f"Error parsing {model.unique_id}. Passing it in processing.",
-                UserWarning,
-            )
-            continue
         schema[model.database.lower()][model.schema.lower()][model.name.lower()] = {
             name.lower(): None for name in qualified_expression.named_selects
         }
